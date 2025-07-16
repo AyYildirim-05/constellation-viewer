@@ -22,7 +22,7 @@ class StarCatalog:
             self.load_constellation_data()
         except Exception as e:
             print(f"Error loading data: {e}")
-            self.create_sample_data()
+            self.create_sample_stars()
     
     def load_hipparcos_catalog(self):
         """Load stars from Hipparcos catalog"""

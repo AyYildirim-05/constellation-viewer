@@ -12,6 +12,7 @@ import sys
 from datetime import datetime, timezone
 import matplotlib.pyplot as plt
 from sky_renderer import SkyRenderer
+from location_detector import LocationDetector
 
 def parse_time(time_str):
     """
@@ -128,6 +129,12 @@ Examples:
         help='List available predefined locations'
     )
     
+    parser.add_argument(
+        '--auto-location',
+        action='store_true',
+        help='Automatically detect current location'
+    )
+    
     args = parser.parse_args()
     
     # Handle list locations
@@ -137,25 +144,51 @@ Examples:
             print(f"  {key}: {loc['name']} ({loc['lat']:.4f}, {loc['lon']:.4f})")
         return
     
-    # Validate that location is provided
-    if not args.location and not args.lat:
-        print("Error: Either --location or --lat/--lon must be provided")
-        sys.exit(1)
-    
     # Determine location
-    if args.location:
+    if args.auto_location:
+        # Auto-detect current location
+        detector = LocationDetector()
+        if detector.detect_location():
+            detector.print_location_info()
+            info = detector.get_location_info()
+            latitude = info['latitude']
+            longitude = info['longitude']
+            city_name = info['city'] or 'Auto-detected Location'
+        else:
+            print("Error: Could not detect location automatically")
+            sys.exit(1)
+    
+    elif args.location:
+        # Use predefined location
         locations = get_sample_locations()
         location_data = locations[args.location]
         latitude = location_data['lat']
         longitude = location_data['lon']
         city_name = location_data['name']
-    else:
+    
+    elif args.lat is not None:
+        # Use custom coordinates
         if args.lon is None:
             print("Error: --lon is required when using --lat")
             sys.exit(1)
         latitude = args.lat
         longitude = args.lon
-        city_name = args.city
+        city_name = args.city or 'Custom Location'
+    
+    else:
+        # No location specified, default to auto-detection
+        print("No location specified. Attempting to auto-detect...")
+        detector = LocationDetector()
+        if detector.detect_location():
+            detector.print_location_info()
+            info = detector.get_location_info()
+            latitude = info['latitude']
+            longitude = info['longitude']
+            city_name = info['city'] or 'Auto-detected Location'
+        else:
+            print("Error: Could not detect location automatically")
+            print("Please specify a location using --location, --lat/--lon, or --auto-location")
+            sys.exit(1)
     
     # Parse time
     if args.time:
