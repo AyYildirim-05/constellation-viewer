@@ -7,7 +7,9 @@ A Python program that generates beautiful images of constellations in the night 
 
 ## Features ✨
 
-- 🌍 **Location-based sky calculation** - Enter any latitude/longitude or use predefined cities
+- 🌍 **Automatic location detection** - No setup needed! Just run the app and it finds your location
+- 📍 **Multiple detection methods** - GPS/WiFi on macOS, IP geolocation everywhere else
+- 🗺️ **Location-based sky calculation** - Enter any latitude/longitude or use predefined cities
 - 🕒 **Time-based rendering** - View the sky at any date and time (past, present, or future)
 - ⭐ **Accurate star positions** - Uses Hipparcos catalog for precise star data
 - 🔗 **Constellation lines** - Connect stars to show traditional constellation patterns
@@ -34,17 +36,23 @@ pip install -r requirements.txt
 ### Basic Examples
 
 ```bash
-# View current sky from New York
+# 🌟 NEW: Automatic location detection (no arguments needed!)
+python main.py
+
+# Explicitly auto-detect location
+python main.py --auto-location
+
+# View current sky from predefined location
 python main.py --location new_york
 
 # Custom location with coordinates
 python main.py --lat 40.7128 --lon -74.0060 --city "New York"
 
-# Specific date and time
-python main.py --location london --time "2024-12-25 00:00:00"
+# Specific date and time with auto-location
+python main.py --time "2024-12-25 00:00:00"
 
-# Save to file
-python main.py --location tokyo --output sky_view.png
+# Save to file with auto-detected location
+python main.py --output my_sky_view.png
 ```
 
 ### Available Predefined Locations
@@ -64,10 +72,29 @@ Current locations include:
 - reykjavik: Reykjavik
 - anchorage: Anchorage
 
+### Automatic Location Detection 🎯
+
+The app automatically detects your location using multiple methods:
+
+1. **macOS Location Services** (most accurate)
+   - Uses GPS, WiFi, and Bluetooth for precise positioning
+   - Accuracy: ~10-100 meters
+   - Requires location permissions
+
+2. **IP Geolocation** (fallback)
+   - Works on any platform with internet connection
+   - Accuracy: ~city level (1-50 km)
+   - No permissions required
+
+3. **Manual Input** (last resort)
+   - Prompts for manual coordinate entry
+   - Useful when automatic detection fails
+
 ### Command Line Options
 
 ```
---location LOCATION     Use a predefined location
+--auto-location        Explicitly auto-detect current location
+--location LOCATION    Use a predefined location
 --lat LATITUDE         Latitude in degrees (use with --lon)
 --lon LONGITUDE        Longitude in degrees (required with --lat)
 --city CITY_NAME       City name for display (optional)
