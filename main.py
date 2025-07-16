@@ -65,7 +65,7 @@ Examples:
     )
     
     # Location options
-    location_group = parser.add_mutually_exclusive_group(required=True)
+    location_group = parser.add_mutually_exclusive_group(required=False)
     location_group.add_argument(
         '--location', 
         choices=get_sample_locations().keys(),
@@ -136,6 +136,11 @@ Examples:
         for key, loc in get_sample_locations().items():
             print(f"  {key}: {loc['name']} ({loc['lat']:.4f}, {loc['lon']:.4f})")
         return
+    
+    # Validate that location is provided
+    if not args.location and not args.lat:
+        print("Error: Either --location or --lat/--lon must be provided")
+        sys.exit(1)
     
     # Determine location
     if args.location:
